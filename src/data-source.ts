@@ -11,7 +11,7 @@ export const dataSource = new DataSource({
     database: "computer_ecommerce",
     synchronize: true,
     logging: false,
-    entities: [User],
+    entities: ['src/entity/**/*.ts'],
     migrations: [],
     subscribers: [],
 })

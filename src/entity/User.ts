@@ -22,5 +22,5 @@ export class User extends BaseEntity {
     enable?: boolean
 
     @Column({ nullable: true })
-    role?: string    
+    role?: string    //ADMIN, CUSTOMER
 }
