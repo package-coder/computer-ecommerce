@@ -20,6 +20,7 @@ export class ProductOrder extends BaseEntity {
     status?: number
 
     /*
+        -1 = Cancelled
         0 = Delivered
         1 = Shipped Out
         2 = Out for Delievery

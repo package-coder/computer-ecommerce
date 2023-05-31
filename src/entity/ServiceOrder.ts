@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm"
-import { Product } from "./Product"
 import { Service } from "./Service"
 
 @Entity()
@@ -7,9 +6,6 @@ export class ServiceOrder extends BaseEntity {
 
     @PrimaryGeneratedColumn("uuid")
     id?: string
-
-    @Column({ type: 'date' })
-    deliveryDate?: string
 
     @Column({ type: 'date' })
     orderDate?: string

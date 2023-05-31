@@ -20,7 +20,6 @@ router.get('/user/:id', async (req, res) => {
 router.post('/add/user', async (req, res) => {
     const repository = dataSource.getRepository(User)
     let user = req?.body
-
     user.firstName = _.startCase(user.firstName)
     user.lastName = _.startCase(user.lastName)
     user.password = await hash(user.password, 12)

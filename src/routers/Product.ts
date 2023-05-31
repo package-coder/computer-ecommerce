@@ -22,8 +22,8 @@ router.post('/add/product', async (req, res) => {
     let product = req?.body
 
     product.name = _.startCase(product.name)
-    product.category = _.lowerCase(product.category)
-    product.variant = _.lowerCase(product.variant)
+    product.category = product.category
+    product.variant = product.variant?.toLocaleLowerCase()
 
     product = repository.create(product)
     product = repository.save(product)
