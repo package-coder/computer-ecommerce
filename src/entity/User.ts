@@ -1,26 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
+import { prop, getModelForClass } from '@typegoose/typegoose';
 
-@Entity()
-export class User extends BaseEntity {
 
-    @PrimaryGeneratedColumn("uuid")
-    id?: string
+export class User {
+    _id?: string
 
-    @Column()
+    @prop({ required: true })
     firstName?: string
 
-    @Column()
+    @prop({ required: true })
     lastName?: string
 
-    @Column()
+    @prop({ required: true })
     email?: string
 
-    @Column()
+    @prop({ required: true })
     password?: string
 
-    @Column({ default: true })
+    @prop({ default: true })
     enable?: boolean
 
-    @Column({ nullable: true })
+    @prop()
     role?: string    //ADMIN, CUSTOMER
 }
+
+export const UserModel = getModelForClass(User, { schemaOptions: { timestamps: true } });

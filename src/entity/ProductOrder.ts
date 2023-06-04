@@ -1,22 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm"
+import { prop, getModelForClass, Ref, mongoose } from '@typegoose/typegoose';
 import { Product } from "./Product"
 
-@Entity()
-export class ProductOrder extends BaseEntity {
+export class ProductOrder {
+    _id?: string
 
-    @PrimaryGeneratedColumn("uuid")
-    id?: string
+    @prop({ required: true })
+    deliveryDate?: Date
 
-    @Column({ type: 'date' })
-    deliveryDate?: string
-
-    @Column({ type: 'date' })
-    orderDate?: string
-
-    @Column({ type: 'int' })
+    @prop({ required: true })
     quantity?: number
 
-    @Column({ type: 'int' })
+    @prop({ required: true })
     status?: number
 
     /*
@@ -26,9 +20,9 @@ export class ProductOrder extends BaseEntity {
         2 = Out for Delievery
     */
         
-    @ManyToMany((type) => Product, (product) => product.productOrder)
-    product?: Product[]
-
-    @Column()
-    address?: string
+    @prop({ ref: 'Product', required: true })
+    product?: mongoose.Types.Array<Ref<Product>>
 }
+
+
+export const ProductOrderModel = getModelForClass(ProductOrder, { schemaOptions: { timestamps: true } });

@@ -1,46 +1,39 @@
-import { hash } from "bcrypt";
 import express from 'express';
-import { Product } from '../entity/Product';
-import { dataSource } from '../data-source';
+import { ProductModel } from '../entity/Product';
 import _ from 'lodash';
+import multerStorage from "../multerStorage";
+import multer from 'multer';
+
+const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/products', async (req, res) => {
-    const repository = dataSource.getRepository(Product)
-    const products = await repository.find()
+    const products = await ProductModel.find({})
     res.json(products)
 })
 
 router.get('/product/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Product)
-    const product = await repository.findOneByOrFail({ id: req?.params?.id })
+    const product = await ProductModel.findById(req?.params?.id)
     res.json(product)
 })
 
-router.post('/add/product', async (req, res) => {
-    const repository = dataSource.getRepository(Product)
+router.post('/add/product', upload.single('image'), async (req, res) => {
     let product = req?.body
-
     product.name = _.startCase(product.name)
     product.category = product.category
     product.variant = product.variant?.toLocaleLowerCase()
+    product.image = req.file
 
-    product = repository.create(product)
-    product = repository.save(product)
+    product = await ProductModel.create(product)
     return res.send(product)
 })
 
 router.put('/update/product/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Product)
-    let product = await repository.findOneByOrFail({ id: req?.params?.id })
-    repository.merge(product, req?.body)
-    repository.save(product)
-    return res.send(product)
-})
-
-router.delete('/delete/product/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Product)
-    let product = await repository.delete(req?.params?.id)
+    const product = await ProductModel.findByIdAndUpdate(
+        req?.params?.id,
+        {...req?.body},
+        { new: true }
+    )
     return res.send(product)
 })
  

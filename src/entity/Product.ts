@@ -1,31 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm"
-import { ProductOrder } from "./ProductOrder"
+import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+export class Product {
+   _id?: string
 
-@Entity()
-export class Product extends BaseEntity {
-
-    @PrimaryGeneratedColumn("uuid")
-    id?: string
-
-    @Column()
+    @prop({ required: true })
     name?: string
 
-    @Column()
+    @prop({ required: true })
     category?: string
 
-    @Column({ nullable: true })
+    @prop()
     description?: string
 
-    @Column({ type: 'float' })
+    @prop({ required: true })
     price?: number
 
-    @Column({ nullable: true })
+    @prop()
     variant?: string
 
-    @ManyToMany((type) => ProductOrder, (order) => order.product)
-    productOrder?: ProductOrder[]
+    @prop({ default: true })
+    enable?: boolean
 
-    // @Column({ type: 'number' })
-    // price?: number
-    //TODO IMAGES
+    @prop()
+    image?: Express.Multer.File
 }
+
+export const ProductModel = getModelForClass(Product, { schemaOptions: { timestamps: true } });

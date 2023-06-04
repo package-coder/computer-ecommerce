@@ -1,24 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm"
+import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { ServiceOrder } from "./ServiceOrder"
+import mongoose from 'mongoose';
 
-@Entity()
-export class Service extends BaseEntity {
+export class Service {
+    _id?: string
 
-    @PrimaryGeneratedColumn("uuid")
-    id?: string
-
-    @Column()
+    @prop({ required: true })
     name?: string
 
-    @Column()
+    @prop({ required: true })
     category?: string
 
-    @Column({ nullable: true })
+    @prop()
     description?: string
 
-    @Column({ type: 'float' })
+    @prop({ required: true })
     fee?: number
 
-    @ManyToMany((type) => ServiceOrder, (order) => order.service)
-    serviceOrder?: ServiceOrder[]
+    @prop({ default: true })
+    enable?: boolean
+
+    @prop()
+    image?: Express.Multer.File
 }
+
+export const ServiceModel = getModelForClass(Service, { schemaOptions: { timestamps: true } });

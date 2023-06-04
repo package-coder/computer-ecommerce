@@ -1,19 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm"
+import { prop, getModelForClass, Ref, mongoose } from '@typegoose/typegoose';
 import { Service } from "./Service"
 
-@Entity()
-export class ServiceOrder extends BaseEntity {
+export class ServiceOrder {
+    _id?: string
 
-    @PrimaryGeneratedColumn("uuid")
-    id?: string
-
-    @Column({ type: 'date' })
-    orderDate?: string
-
-    @Column({ type: 'int' })
-    quantity?: number
-
-    @Column({ type: 'int' })
+    @prop({ required: true })
     status?: number
 
     /*
@@ -22,9 +13,8 @@ export class ServiceOrder extends BaseEntity {
         1 = Troubleshooting
     */
         
-    @ManyToMany((type) => Service, (service) => service.serviceOrder)
-    service?: Service[]
-
-    @Column()
-    address?: string
+    @prop({ ref: 'Service', required: true })
+    service?: mongoose.Types.Array<Ref<Service>>
 }
+
+export const ServiceOrderModel = getModelForClass(ServiceOrder, { schemaOptions: { timestamps: true } });

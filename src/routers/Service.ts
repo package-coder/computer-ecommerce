@@ -1,44 +1,39 @@
 import express from 'express';
-import { Service } from '../entity/Service';
-import { dataSource } from '../data-source';
+import { ServiceModel } from '../entity/Service';
 import _ from 'lodash';
+import multerStorage from "../multerStorage";
+import multer from 'multer';
+
+const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/services', async (req, res) => {
-    const repository = dataSource.getRepository(Service)
-    const services = await repository.find()
+    const services = await ServiceModel.find({})
     res.json(services)
 })
 
 router.get('/service/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Service)
-    const service = await repository.findOneByOrFail({ id: req?.params?.id })
+    const service = await ServiceModel.findById(req?.params?.id)
     res.json(service)
 })
 
-router.post('/add/service', async (req, res) => {
-    const repository = dataSource.getRepository(Service)
+router.post('/add/service', upload.single('image'), async (req, res) => {
     let service = req?.body
 
     service.name = _.startCase(service.name)
     service.category = _.lowerCase(service.category)
+    service.image = req.file
 
-    service = repository.create(service)
-    service = repository.save(service)
+    service = await ServiceModel.create(service)
     return res.send(service)
 })
 
 router.put('/update/service/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Service)
-    let service = await repository.findOneByOrFail({ id: req?.params?.id })
-    repository.merge(service, req?.body)
-    repository.save(service)
-    return res.send(service)
-})
-
-router.delete('/delete/service/:id', async (req, res) => {
-    const repository = dataSource.getRepository(Service)
-    let service = await repository.delete(req?.params?.id)
+    const service = await ServiceModel.findByIdAndUpdate(
+        req?.params?.id,
+        {...req?.body},
+        { new: true }
+    )
     return res.send(service)
 })
  

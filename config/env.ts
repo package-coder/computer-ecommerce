@@ -5,7 +5,7 @@ dotenv.config();
 export const server_config = {
     SERVER_PORT: process.env.SERVER_PORT,
     SERVER_URI: process.env.SERVER_URI,
-    DB_URI: process.env.DB_URI,
+    DB_URI: process.env.DB_URI as string,
 }
 
 export const client_config = {
