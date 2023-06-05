@@ -3,20 +3,35 @@ import _, { omit } from 'lodash';
 import { OrderModel, OrderStatus } from '../entity/Order';
 import { ProductOrderModel } from '../entity/ProductOrder';
 import { ServiceOrderModel } from '../entity/ServiceOrder';
+import mongoose from 'mongoose';
 const router = express.Router();
 
 router.get('/orders', async (req, res) => {
-    // console.log(req.params)
-    // console.log(req.query?.status)
-    // const status = req.query?.status as string
-    // const orderStatus = OrderStatus[status as keyof typeof OrderStatus]
-    
-    // let query: any = undefined
-    // if(status) 
-    //     query = { status:  }
+    let user = res.locals?.payload?.user
+    const matched = user.role == 'USER' ? [{
+        $match: {
+            user: new mongoose.Types.ObjectId(user?._id)
+        }
+    }] : []
 
-    // console.log(query)
-    const orders = await OrderModel.find({})
+    const orders = await OrderModel.aggregate([
+        ...matched,
+
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'user'
+            }
+        },
+        {
+            $addFields: {
+                user: { $arrayElemAt: ['$user', 0] }
+            }
+        }
+    ]).sort({ _id: -1 })
+
     res.json(orders)
 })
 
@@ -27,14 +42,16 @@ router.get('/order/:id', async (req, res) => {
 
 router.post('/add/order', async (req, res) => {
     let order = req?.body
-
-    console.log(order)
-
+    let user = res.locals?.payload?.user
     order.orderId = Date.now()?.toString()
     order = await OrderModel.create({
         ...omit(order, ['productOrder', 'serviceOrder']),
+        user,
         status: OrderStatus.PROCESSING
     })
+
+    console.log(order)
+
     let productOrder = req?.body?.productOrder
     let serviceOrder = req?.body?.serviceOrder
 
