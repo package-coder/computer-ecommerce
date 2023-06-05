@@ -10,13 +10,13 @@ import { connect } from "mongoose";
 dataSource.initialize().then(async () => {
 
     const app: Express = express();
-    app.use('/public', express.static('public'));
-
+    
     app.use(cors(corsOption))
-    app.use(cookieParser())
     app.use(express.json())
+    app.use(cookieParser())
     app.use(routers)
-
+    
+    app.use('/public', express.static('public'));
 
     const { 
         connection: { host, port, name }

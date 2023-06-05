@@ -1,11 +1,16 @@
 import { prop, getModelForClass, Ref, mongoose } from '@typegoose/typegoose';
 import { Service } from "./Service"
+import { Order } from './Order';
+
+export enum ServiceStatus {
+    CANCELLED,
+    COMPLETED,
+    TROUBLESHOOTING,
+    PROCESSING
+}
 
 export class ServiceOrder {
     _id?: string
-
-    @prop({ required: true })
-    status?: number
 
     /*
         -1 = Cancelled
@@ -14,7 +19,10 @@ export class ServiceOrder {
     */
         
     @prop({ ref: 'Service', required: true })
-    service?: mongoose.Types.Array<Ref<Service>>
+    service?: Ref<Service>
+
+    @prop({ ref: 'Order', required: true })
+    orderDetails?: Ref<Order>
 }
 
 export const ServiceOrderModel = getModelForClass(ServiceOrder, { schemaOptions: { timestamps: true } });
