@@ -10,17 +10,7 @@ const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/services', async (req, res) => {
-    const user = res.locals?.payload?.user
-    if(user?.role == 'ADMIN') {
-        return res.json(await ServiceModel.find({}))
-    }
-    
-    const shop = await ShopModel.findOne({
-        owner: new mongoose.Types.ObjectId(user?._id) 
-    })
-    const services = await ServiceModel.find({
-        shop: new mongoose.Types.ObjectId(shop?._id)
-    })
+    const services = await ServiceModel.find({})
     res.json(services)
 })
 
