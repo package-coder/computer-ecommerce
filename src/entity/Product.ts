@@ -1,4 +1,5 @@
 import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { Shop } from './Shop';
 export class Product {
    _id?: string
 
@@ -22,6 +23,9 @@ export class Product {
 
     @prop()
     image?: Express.Multer.File
+
+    @prop({ ref: 'shop' })
+    shop?: Ref<Shop>
 }
 
 export const ProductModel = getModelForClass(Product, { schemaOptions: { timestamps: true } });

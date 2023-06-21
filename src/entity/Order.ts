@@ -1,5 +1,6 @@
 import { Ref, getModelForClass, prop } from "@typegoose/typegoose"
 import { User } from "./User"
+import { Shop } from "./Shop"
 
 export enum OrderStatus {
     CANCELLED,
@@ -20,7 +21,7 @@ export class Order {
     @prop({ required: true })
     totalPrice?: number
 
-    @prop({ ref: 'user', required: false })
+    @prop({ ref: 'user', required: true })
     user?: Ref<User>
 
     @prop({ enum: OrderStatus, required: true })

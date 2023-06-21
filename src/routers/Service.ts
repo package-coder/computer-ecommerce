@@ -3,12 +3,24 @@ import { ServiceModel } from '../entity/Service';
 import _ from 'lodash';
 import multerStorage from "../multerStorage";
 import multer from 'multer';
+import mongoose from 'mongoose';
+import { ShopModel } from '../entity/Shop';
 
 const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/services', async (req, res) => {
-    const services = await ServiceModel.find({})
+    const user = res.locals?.payload?.user
+    if(user?.role == 'ADMIN') {
+        return res.json(await ServiceModel.find({}))
+    }
+    
+    const shop = await ShopModel.findOne({
+        owner: new mongoose.Types.ObjectId(user?._id) 
+    })
+    const services = await ServiceModel.find({
+        shop: new mongoose.Types.ObjectId(shop?._id)
+    })
     res.json(services)
 })
 
@@ -23,6 +35,12 @@ router.post('/add/service', upload.single('image'), async (req, res) => {
     service.name = _.startCase(service.name)
     service.category = _.lowerCase(service.category)
     service.image = req.file
+
+    const user = res.locals?.payload?.user
+    if(user?.role == 'USER') {
+        const shop = await ShopModel.findOne({ owner: new mongoose.Types.ObjectId(user?._id) })
+        service.shop = shop
+    }
 
     service = await ServiceModel.create(service)
     return res.send(service)

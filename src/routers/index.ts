@@ -6,6 +6,7 @@ import authRouter from './Auth';
 import productRouter from './Product';
 import serviceRouter from './Service';
 import orderRouter from './Order';
+import shopRouter from './Shop';
 import authGuard from '../guards/auth';
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.use(index, authGuard, userRouter);
 router.use(index, authGuard, productRouter);
 router.use(index, authGuard, serviceRouter);
 router.use(index, authGuard, orderRouter);
+router.use(index, authGuard, shopRouter)
 
 export default router
