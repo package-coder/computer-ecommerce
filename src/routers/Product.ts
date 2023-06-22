@@ -10,7 +10,21 @@ const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/products', async (req, res) => {
-    const products = await ProductModel.find({})
+    const products = await ProductModel.aggregate([
+        {
+            $lookup: {
+                from: 'shops',
+                localField: 'shop',
+                foreignField: '_id',
+                as: 'shop'
+            }
+        },
+        {
+            $addFields: {
+                shop: { $arrayElemAt: ['$shop', 0] }
+            }
+        }
+    ]).sort({ _id: -1 })
     res.json(products)
 })
 

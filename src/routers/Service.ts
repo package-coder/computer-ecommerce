@@ -10,7 +10,21 @@ const upload = multer({ storage: multerStorage })
 const router = express.Router();
 
 router.get('/services', async (req, res) => {
-    const services = await ServiceModel.find({})
+    const services = await ServiceModel.aggregate([
+        {
+            $lookup: {
+                from: 'shops',
+                localField: 'shop',
+                foreignField: '_id',
+                as: 'shop'
+            }
+        },
+        {
+            $addFields: {
+                shop: { $arrayElemAt: ['$shop', 0] }
+            }
+        }
+    ]).sort({ _id: -1 })
     res.json(services)
 })
 
