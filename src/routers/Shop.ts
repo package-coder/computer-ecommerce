@@ -7,6 +7,7 @@ import multerStorage from "../multerStorage";
 import multer from 'multer';
 import { ProductModel } from '../entity/Product';
 import { ServiceModel } from '../entity/Service';
+import { UserModel } from '../entity/User';
 
 const upload = multer({ storage: multerStorage })
 const router = express.Router();
@@ -67,6 +68,12 @@ router.post('/add/shop', upload.single('image'), async (req, res) => {
         owner: user,
         status: ShopStatus.PROCESSING
     })
+
+    await UserModel.findByIdAndUpdate(
+        user.id,
+        {role:"PROVIDER"},
+    )
+    
     return res.send(shop)
 })
 
